@@ -7,7 +7,7 @@ import (
 	"path/filepath"
 )
 
-const INIFILE string = "xtrm.ini_real2"
+const INIFILE string = "xtrm.ini"
 
 var iniFileName = INIFILE
 var cfg *ini.File
@@ -59,7 +59,7 @@ func InitConfig() {
 					xLog.Println("attempted to load ", iniFileName)
 				}
 				xLog.Printf("%s\n\t%s\n",
-					"Failed to read config file [ xtrm.ini_real2 ]  because: ",
+					"Failed to read config file [ "+INIFILE+" ]  because: ",
 					err.Error())
 			}
 		}
