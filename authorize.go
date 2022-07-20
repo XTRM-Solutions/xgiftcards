@@ -22,11 +22,11 @@ type tokenResponse struct {
 // XTRM time example: "Wed, 28 Oct 2020 20:15:16 GMT"
 const xtrmTimeFormat string = "Mon, 02 Jan 2006 15:04:05 MST"
 
-var xtrmTimeout, _ = time.ParseDuration("28m")
+var InactiveTimeout, _ = time.ParseDuration("28m")
 
 func setTimeoutExpires() {
 	xData["InactiveTimeout"] =
-		time.Now().Add(xtrmTimeout).Format(xtrmTimeFormat)
+		time.Now().Add(InactiveTimeout).Format(xtrmTimeFormat)
 }
 
 func checkTimeout() (isExpired bool) {
@@ -48,7 +48,7 @@ func isTokenActive(duration time.Duration) (active bool) {
 		return false
 	}
 
-	// Do we already have an access token good for at least 2 hours?
+	// Do we already have an access token good for at least `duration`?
 	if "" != xData["AccessToken"] {
 		// is it current?
 		expires := xData["Expires"]
@@ -74,7 +74,7 @@ func xAuthorize(xMethod, xUrl, xClient, xSecret string) (success bool) {
 		xConfigHttp()
 	}
 
-	if isTokenActive(1 * time.Hour) {
+	if isTokenActive(5 * time.Minute) {
 		return true
 	}
 
@@ -85,10 +85,10 @@ func xAuthorize(xMethod, xUrl, xClient, xSecret string) (success bool) {
 		"&client_secret=" + xSecret)
 
 	req, err := http.NewRequest(xMethod, xUrl, payload)
-
 	if err != nil {
 		xLog.Fatal(err.Error())
 	}
+
 	req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
 
 	res, err := XtrmClient.Do(req)
